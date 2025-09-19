@@ -1,0 +1,10 @@
+{
+  "numeroProcesso": "2222222-22.2023.4.02.0001",
+  "siglaTribunal": "TRF2",
+  "esfera": "Federal",
+  "valorCondenacao": 9000,
+  "documentos": [
+    {"id":"DOC-1-4","nome":"Requisição (RPV)","texto":"Expede-se RPV."}
+  ],
+  "movimentos": []
+}

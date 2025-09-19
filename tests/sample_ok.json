@@ -1,0 +1,13 @@
+{
+  "numeroProcesso": "0001234-56.2023.4.05.8100",
+  "siglaTribunal": "TRF5",
+  "esfera": "Federal",
+  "valorCondenacao": 67592,
+  "documentos": [
+    {"id": "DOC-1-2", "nome": "Certidão de Trânsito em Julgado", "texto": "Certifico o trânsito em julgado."},
+    {"id": "DOC-1-4", "nome": "Requisição (RPV)", "texto": "Expede-se RPV em favor do exequente."}
+  ],
+  "movimentos": [
+    {"descricao": "Iniciado cumprimento definitivo de sentença."}
+  ]
+}

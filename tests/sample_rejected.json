@@ -1,0 +1,10 @@
+{
+  "numeroProcesso": "1111111-11.2023.5.01.0001",
+  "siglaTribunal": "TRT1",
+  "esfera": "Trabalhista",
+  "valorCondenacao": 25000,
+  "documentos": [
+    {"id": "DOC-1-2", "nome": "Certidão de Trânsito em Julgado", "texto": "Transitou em julgado."}
+  ],
+  "movimentos": []
+}
