@@ -1,4 +1,3 @@
-# app/llm.py
 import os
 import json
 import logging
@@ -11,8 +10,10 @@ from openai import OpenAI
 from .schemas import Processo, DecisionOut
 from .settings import settings
 
+from typing import Tuple
 
-# ---------------------- utilidades ----------------------
+
+
 def _read_prompt_header() -> str:
     with open("prompts/v1.md", "r", encoding="utf-8") as f:
         return f.read().strip()
@@ -35,7 +36,7 @@ def _coerce_json(s: str) -> Dict[str, Any]:
     return json.loads(s[first : last + 1])
 
 
-# ---------------------- OLLAMA --------------------------
+
 def _ask_ollama(prompt: str, model: str) -> str:
     """
     Chama o Ollama local via REST e retorna APENAS o conteúdo textual.
@@ -61,22 +62,22 @@ def _ask_ollama(prompt: str, model: str) -> str:
     return data["message"]["content"]
 
 
-# ---------------------- OPENAI (opcional) ---------------
+
 _http_client = httpx.Client(timeout=60.0, follow_redirects=True)
 _openai = lambda: OpenAI(api_key=settings.OPENAI_API_KEY, http_client=_http_client)
 
 
-# ---------------------- Função principal ----------------
+
 def call_llm_and_validate(prompt: str) -> DecisionOut:
     provider = settings.LLM_PROVIDER.lower()
 
-    # 1) OLLAMA local
+    
     if provider == "ollama":
         content = _ask_ollama(prompt, settings.LLM_MODEL)
         data = _coerce_json(content)
         return DecisionOut.model_validate(data)
 
-    # 2) OPENAI (se um dia você ativar)
+   
     if provider == "openai":
         if not settings.OPENAI_API_KEY:
             raise RuntimeError("OPENAI_API_KEY ausente.")
@@ -95,7 +96,7 @@ def call_llm_and_validate(prompt: str) -> DecisionOut:
             logging.warning("Falha no chat.completions: %s", e)
 
         if not content:
-            # fallback na Responses API
+           
             try:
                 resp = _openai().responses.create(
                     model=settings.LLM_MODEL,
@@ -109,8 +110,44 @@ def call_llm_and_validate(prompt: str) -> DecisionOut:
         data = _coerce_json(content)
         return DecisionOut.model_validate(data)
 
-    # 3) STUB (apenas para desenvolvimento)
+    
     if provider == "stub":
         raise RuntimeError("LLM em modo 'stub' – não chama modelo.")
 
     raise RuntimeError(f"LLM provider não suportado: {provider}")
+
+def call_llm_and_validate(prompt: str) -> str:
+    provider = os.getenv("LLM_PROVIDER", "ollama").lower()
+    model = os.getenv("LLM_MODEL", "llama3-8b-8192")
+
+    if provider == "ollama":
+        base = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+        r = requests.post(
+            f"{base}/api/chat",
+            json={
+                "model": model,
+                "messages": [{"role": "user", "content": prompt}],
+                "stream": False,
+            },
+            timeout=120,
+        )
+        r.raise_for_status()
+        return r.json()["message"]["content"]
+
+    elif provider == "openai":
+        
+        pass
+
+    elif provider == "groq":
+        
+        from groq import Groq
+        client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+        resp = client.chat.completions.create(
+            model=model,
+            temperature=0,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        return resp.choices[0].message.content
+
+    else:
+        raise ValueError(f"LLM_PROVIDER não suportado: {provider}")
