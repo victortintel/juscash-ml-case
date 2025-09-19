@@ -3,9 +3,14 @@ from .schemas import Processo, DecisionOut
 from .policy import preliminar_checks
 from .llm import _build_prompt, call_llm_and_validate
 from .settings import settings
-
+import os
 import logging
 import requests  
+
+logging.basicConfig(level=logging.INFO)
+logging.getLogger("uvicorn.error").setLevel(logging.INFO)
+
+logging.info(f"[BOOT] LLM_PROVIDER={os.getenv('LLM_PROVIDER')} LLM_MODEL={os.getenv('LLM_MODEL')}")
 
 logger = logging.getLogger(__name__)
 
