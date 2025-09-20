@@ -17,9 +17,7 @@
 - Deploy no Render (API)
 - Deploy no Render (UI)
 - Observabilidade básica (opcional)
-- Debug e Troubleshooting
 - Checklist do case
-- Licença
 -------------------------------------------------------------
 ## Arquitetura
              ┌──────────────┐
@@ -293,3 +291,24 @@ Logo após calcular a decisão em POST /predict, se N8N_WEBHOOK_URL estiver seta
 - Timeout: 10s (não quebra a API se o webhook falhar).
 - Útil para ter “rastro” de uso sem depender de logs do provedor.
 ----------------------------------------------------------------------------------------------------------------
+## Checklist do case: 
+
+✅ POST /predict retorna 200 com JSON válido (decision, rationale, citacoes).
+
+✅ /docs legível e com exemplos (Swagger).
+
+✅ prompts/v1.md com regras (POL-1..POL-8) e orientações de formato.
+
+✅ llm.py alterna entre OpenAI/Groq/Ollama por env.
+
+✅ .env.example, requirements.txt, README.md presentes.
+
+✅ 3 samples em data/samples.
+
+✅ UI (Streamlit) funcionando (local e Render).
+
+✅ Observabilidade opcional documentada e implementada (webhook).
+-------------------------------------------------------------------------------------------------------------
+## Agradecimento
+
+Obrigado por avaliar este case. O repositório foi pensado para ser prático (subir rápido) e didático (documentado, com exemplos, fallback de provedores e deploy passo a passo).
