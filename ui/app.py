@@ -3,7 +3,7 @@ import os, json, requests, streamlit as st
 API_BASE = os.getenv("API_BASE_URL", "http://localhost:8000")
 
 st.set_page_config(page_title="Verificador (LLM)", page_icon="⚖️")
-st.title("⚖️ Verificador de Processos (LLM)")
+st.title("⚖️ Verificador de Processos (LLM) - Victor Tintel")
 
 payload_default = {
     "numeroProcesso": "0001234-56.2023.4.05.8100",
