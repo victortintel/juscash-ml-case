@@ -16,7 +16,7 @@
 - Exemplos (cURL e Swagger)
 - Deploy no Render (API)
 - Deploy no Render (UI)
-- Observabilidade básica (opcional)
+- Observabilidade básica 
 - Checklist do case
 -------------------------------------------------------------
 ## Arquitetura
@@ -86,7 +86,7 @@
 
 │
 
-├─ tests/              # (espaço para testes; se houver)
+├─ tests/              # (espaço para testes)
 
 ├─ .env.example        # template de variáveis de ambiente
 
@@ -106,7 +106,7 @@
 - Base local: http://localhost:8000
 - Docs: /docs
 - GET /health → {"status": "ok"}
-- POST /predict → recebe o JSON do processo e retorna a decisão (ver formato acima)
+- POST /predict → recebe o JSON do processo e retorna a decisão 
 - GET /debug/llm → inspeção rápida do provider/modelo e se a chave do provedor existe:
 
 {"provider":"groq","model":"llama3-8b-8192","has_key": true}
@@ -114,8 +114,8 @@
 --------------------------------------------------------------------------------------------
 ## Políticas e Prompt
 - As políticas (POL-1..POL-8) e as instruções de formato vivem em prompts/v1.md.
-- O llm.py concatena as políticas e orienta o modelo a retornar JSON estrito (sem comentários, sem texto extra).
-- O main.py valida o JSON antes de responder (evita “alucinações” de formato).
+- O llm.py concatena as políticas e orienta o modelo a retornar JSON estrito .
+- O main.py valida o JSON antes de responder.
 -------------------------------------------------------------------------------------------
 ## Variáveis de ambiente
 Crie um .env a partir de .env.example.
@@ -312,3 +312,4 @@ Logo após calcular a decisão em POST /predict, se N8N_WEBHOOK_URL estiver seta
 ## Agradecimento
 
 Obrigado por avaliar este case. O repositório foi pensado para ser prático (subir rápido) e didático (documentado, com exemplos, fallback de provedores e deploy passo a passo).
+
