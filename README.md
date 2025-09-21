@@ -3,6 +3,13 @@
 - API + UI para validar, via LLM, se um processo judicial atende às políticas de compra de crédito da Juscash.
 - Inclui: FastAPI com documentação Swagger, Streamlit UI, seleção de provedor de LLM por ambiente (Groq, Ollama, OpenAI), exemplos de JSON, Dockerfiles, docker-compose, e deploy no Render
 ----------------------------------------------------------------
+## Links públicos (deploy)
+
+- API (base): https://juscash-ml-case.onrender.com
+- Health: https://juscash-ml-case.onrender.com/health
+- Docs (Swagger/OpenAPI): https://juscash-ml-case.onrender.com/docs
+- UI (Streamlit): https://juscash-ml-ui-streamlit.onrender.com
+----------------------------------------------------------------
 ## Sumário
 - Arquitetura
 - Como funciona (resumo)
@@ -312,4 +319,5 @@ Logo após calcular a decisão em POST /predict, se N8N_WEBHOOK_URL estiver seta
 ## Agradecimento
 
 Obrigado por avaliar este case. O repositório foi pensado para ser prático (subir rápido) e didático (documentado, com exemplos, fallback de provedores e deploy passo a passo).
+
 
