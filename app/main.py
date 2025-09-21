@@ -5,12 +5,12 @@ from .llm import _build_prompt, call_llm_and_validate
 from .settings import settings
 import os
 import logging
-import requests  
+import requests
 
 logging.basicConfig(level=logging.INFO)
 logging.getLogger("uvicorn.error").setLevel(logging.INFO)
 
-logging.info(f"[BOOT] LLM_PROVIDER={os.getenv('LLM_PROVIDER')} LLM_MODEL={os.getenv('LLM_MODEL')}")
+logging.info(f"[BOOT] LLM_PROVIDER={settings.LLM_PROVIDER} LLM_MODEL={settings.LLM_MODEL}")
 
 logger = logging.getLogger(__name__)
 
@@ -50,8 +50,17 @@ def _enforce_policy_precedence(out: DecisionOut, cites_from_rules):
             out.rationale = "Reprovação por regra determinística."
         return out
 
-    
     return out
+
+
+def _has_provider_key() -> bool:
+    prov = (settings.LLM_PROVIDER or "").lower()
+    if prov == "groq":
+        return bool(getattr(settings, "GROQ_API_KEY", ""))
+    if prov == "openai":
+        return bool(getattr(settings, "OPENAI_API_KEY", ""))
+    
+    return True
 
 
 @app.get("/debug/llm")
@@ -59,7 +68,7 @@ def debug_llm():
     return {
         "provider": settings.LLM_PROVIDER,
         "model": settings.LLM_MODEL,
-        "has_key": bool(getattr(settings, "OPENAI_API_KEY", "")),
+        "has_key": _has_provider_key(),
     }
 
 
@@ -82,6 +91,7 @@ def predict(proc: Processo) -> DecisionOut:
         if not out.citacoes:
             out.citacoes = sorted(set(cites or []))
 
+        
         valid = {"approved", "rejected", "incomplete"}
         if out.decision not in valid:
             out.decision = suggested
@@ -91,14 +101,14 @@ def predict(proc: Processo) -> DecisionOut:
         
         out = _enforce_policy_precedence(out, cites)
 
-        
+       
         try:
             if getattr(settings, "N8N_WEBHOOK_URL", ""):
                 requests.post(
                     settings.N8N_WEBHOOK_URL,
                     json={
-                        "input": proc.dict(),        
-                        "output": out.dict(),        
+                        "input": proc.dict(),   # se suas models forem pydantic v2 com compat v1, .dict() ok
+                        "output": out.dict(),
                         "provider": settings.LLM_PROVIDER,
                         "model": settings.LLM_MODEL,
                     },
@@ -110,13 +120,13 @@ def predict(proc: Processo) -> DecisionOut:
         return out
 
     except Exception:
-        logging.exception("LLM error (usando fallback)")
+        logging.exception("LLM error — aplicando fallback determinístico")
 
     
     if suggested == "rejected":
         out = DecisionOut(
             decision="rejected",
-            rationale="Regra determinística aplicada.",
+            rationale="Reprovado por regra determinística.",
             citacoes=sorted(set(cites or [])),
         )
     elif suggested == "incomplete":
@@ -128,7 +138,7 @@ def predict(proc: Processo) -> DecisionOut:
     else:
         out = DecisionOut(
             decision="approved",
-            rationale="Trânsito/execução/valor parecem consistentes; LLM indisponível.",
+            rationale="Aprovado pelas regras determinísticas (trânsito/execução/valor coerentes).",
             citacoes=sorted(set((cites or []) + ["POL-1", "POL-2"])),
         )
 
